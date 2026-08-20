@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Prediction History</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #f4f6fb;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 22px 40px;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 26px;
+        }
+
+        .back {
+            background: white;
+            color: #667eea;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .back:hover {
+            background: #f0f0f0;
+        }
+
+        .container {
+            padding: 40px;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            overflow-x: auto;
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 25px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 700px;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+            padding: 14px;
+            text-align: center;
+        }
+
+        td {
+            padding: 14px;
+            border-bottom: 1px solid #ddd;
+            text-align: center;
+        }
+
+        tr:hover {
+            background: #f4f6fb;
+        }
+
+        .excellent {
+            color: green;
+            font-weight: bold;
+        }
+
+        .good {
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .average {
+            color: orange;
+            font-weight: bold;
+        }
+
+        .poor {
+            color: red;
+            font-weight: bold;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 30px;
+            color: #777;
+            font-weight: bold;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<!-- HEADER -->
+
+<div class="header">
+
+    <h1>
+        Student Performance Prediction System
+    </h1>
+
+    <a href="/admin/dashboard" class="back">
+        ← Back to Dashboard
+    </a>
+
+</div>
+
+
+<!-- CONTENT -->
+
+<div class="container">
+
+    <div class="card">
+
+        <h2>
+            📋 Performance Prediction History
+        </h2>
+
+        <table>
+
+            <thead>
+
+            <tr>
+
+                <th>Prediction ID</th>
+
+                <th>Student ID</th>
+
+                <th>Performance</th>
+
+                <th>Prediction Date</th>
+
+            </tr>
+
+            </thead>
+
+
+            <tbody>
+
+            <!-- DISPLAY PREDICTION HISTORY -->
+
+            <tr th:each="prediction : ${predictions}">
+
+                <td th:text="${prediction.predictionId}">
+                    1
+                </td>
+
+                <td th:text="${prediction.studentId}">
+                    1
+                </td>
+
+                <td th:text="${prediction.predictedPerformance}">
+                    Excellent
+                </td>
+
+                <td th:text="${prediction.predictionDate}">
+                    2026-08-19
+                </td>
+
+            </tr>
+
+
+            <!-- NO DATA -->
+
+            <tr th:if="${predictions == null || #lists.isEmpty(predictions)}">
+
+                <td colspan="4"
+                    class="empty">
+
+                    No prediction history found.
+
+                </td>
+
+            </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Manage Students</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f6fb;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 22px 40px;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 26px;
+        }
+
+        .back {
+            background: white;
+            color: #667eea;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .container {
+            padding: 40px;
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 25px;
+        }
+
+        .table-container {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+
+            box-shadow:
+                    0 5px 20px
+                    rgba(0, 0, 0, 0.1);
+
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 900px;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+            padding: 14px;
+            text-align: center;
+        }
+
+        td {
+            padding: 13px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+            color: #444;
+        }
+
+        tr:hover {
+            background: #f5f6ff;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 25px;
+            color: #777;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="header">
+
+    <h1>
+        Student Performance Prediction System
+    </h1>
+
+    <a href="/admin/dashboard" class="back">
+        Back to Dashboard
+    </a>
+
+</div>
+
+
+<div class="container">
+
+    <h2>
+        👨‍🎓 Manage Students
+    </h2>
+
+    <div class="table-container">
+
+        <table>
+
+            <thead>
+
+            <tr>
+
+                <th>Student ID</th>
+                <th>Name</th>
+                <th>Department</th>
+                <th>Attendance</th>
+                <th>Internal Mark</th>
+                <th>Assignment Mark</th>
+                <th>Previous Mark</th>
+                <th>Study Hours</th>
+
+            </tr>
+
+            </thead>
+
+            <tbody>
+
+            <tr th:each="student : ${students}">
+
+                <td th:text="${student.studentId}"></td>
+
+                <td th:text="${student.name}"></td>
+
+                <td th:text="${student.department}"></td>
+
+                <td th:text="${student.attendance}"></td>
+
+                <td th:text="${student.internalMark}"></td>
+
+                <td th:text="${student.assignmentMark}"></td>
+
+                <td th:text="${student.previousMark}"></td>
+
+                <td th:text="${student.studyHours}"></td>
+
+            </tr>
+
+            <tr th:if="${#lists.isEmpty(students)}">
+
+                <td colspan="8" class="no-data">
+                    No students found.
+                </td>
+
+            </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

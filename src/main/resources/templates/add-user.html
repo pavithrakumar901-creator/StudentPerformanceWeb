@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Add User</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            background: #f4f6fb;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 22px 40px;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 25px;
+        }
+
+        .back {
+            background: white;
+            color: #667eea;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .card {
+            background: white;
+            width: 600px;
+            padding: 35px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            margin-top: 25px;
+            margin-bottom: 18px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #667eea;
+            color: #667eea;
+            font-size: 18px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 7px;
+            font-weight: bold;
+            color: #444;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .student-details {
+            display: none;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+
+            font-size: 16px;
+            font-weight: bold;
+
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .submit-btn:hover {
+            opacity: 0.9;
+        }
+
+        .cancel-btn {
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .error {
+            background: #ffe5e5;
+            color: #c62828;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .info {
+            background: #eef2ff;
+            color: #4f46a5;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="header">
+
+    <h1>
+        Student Performance Prediction System
+    </h1>
+
+    <a href="/admin/users" class="back">
+        ← Back
+    </a>
+
+</div>
+
+
+<div class="container">
+
+    <div class="card">
+
+        <h2>
+            ➕ Add New User
+        </h2>
+
+
+        <!-- ERROR MESSAGE -->
+
+        <div class="error"
+             th:if="${error}"
+             th:text="${error}">
+        </div>
+
+
+        <div class="info">
+            For a Student account, enter the student's details below.
+            The Student ID will be generated automatically.
+        </div>
+
+
+        <form action="/admin/users/add"
+              method="post"
+              id="userForm">
+
+
+            <!-- ============================= -->
+            <!-- LOGIN DETAILS -->
+            <!-- ============================= -->
+
+            <div class="section-title">
+                🔐 Login Details
+            </div>
+
+
+            <!-- USERNAME -->
+
+            <div class="form-group">
+
+                <label for="username">
+                    Username
+                </label>
+
+                <input type="text"
+                       id="username"
+                       name="username"
+                       placeholder="Enter username"
+                       required>
+
+            </div>
+
+
+            <!-- PASSWORD -->
+
+            <div class="form-group">
+
+                <label for="password">
+                    Password
+                </label>
+
+                <input type="password"
+                       id="password"
+                       name="password"
+                       placeholder="Enter password"
+                       required>
+
+            </div>
+
+
+            <!-- ROLE -->
+
+            <div class="form-group">
+
+                <label for="role">
+                    Role
+                </label>
+
+                <select id="role"
+                        name="role"
+                        required>
+
+                    <option value="">
+                        Select Role
+                    </option>
+
+                    <option value="STUDENT">
+                        Student
+                    </option>
+
+                    <option value="ADMIN">
+                        Admin
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- ============================= -->
+            <!-- STUDENT DETAILS -->
+            <!-- ============================= -->
+
+            <div class="student-details"
+                 id="studentDetails">
+
+                <div class="section-title">
+                    🎓 Student Details
+                </div>
+
+
+                <!-- NAME -->
+
+                <div class="form-group">
+
+                    <label for="name">
+                        Student Name
+                    </label>
+
+                    <input type="text"
+                           id="name"
+                           name="name"
+                           placeholder="Enter student name">
+
+                </div>
+
+
+                <!-- DEPARTMENT -->
+
+                <div class="form-group">
+
+                    <label for="department">
+                        Department
+                    </label>
+
+                    <input type="text"
+                           id="department"
+                           name="department"
+                           placeholder="Example: M.Sc Computer Science">
+
+                </div>
+
+
+                <!-- ATTENDANCE -->
+
+                <div class="form-group">
+
+                    <label for="attendance">
+                        Attendance (%)
+                    </label>
+
+                    <input type="number"
+                           id="attendance"
+                           name="attendance"
+                           min="0"
+                           max="100"
+                           step="0.01"
+                           placeholder="Example: 90">
+
+                </div>
+
+
+                <!-- INTERNAL MARK -->
+
+                <div class="form-group">
+
+                    <label for="internalMark">
+                        Internal Mark
+                    </label>
+
+                    <input type="number"
+                           id="internalMark"
+                           name="internalMark"
+                           min="0"
+                           max="100"
+                           step="0.01"
+                           placeholder="Example: 85">
+
+                </div>
+
+
+                <!-- ASSIGNMENT MARK -->
+
+                <div class="form-group">
+
+                    <label for="assignmentMark">
+                        Assignment Mark
+                    </label>
+
+                    <input type="number"
+                           id="assignmentMark"
+                           name="assignmentMark"
+                           min="0"
+                           max="100"
+                           step="0.01"
+                           placeholder="Example: 88">
+
+                </div>
+
+
+                <!-- PREVIOUS MARK -->
+
+                <div class="form-group">
+
+                    <label for="previousMark">
+                        Previous Mark
+                    </label>
+
+                    <input type="number"
+                           id="previousMark"
+                           name="previousMark"
+                           min="0"
+                           max="100"
+                           step="0.01"
+                           placeholder="Example: 82">
+
+                </div>
+
+
+                <!-- STUDY HOURS -->
+
+                <div class="form-group">
+
+                    <label for="studyHours">
+                        Study Hours
+                    </label>
+
+                    <input type="number"
+                           id="studyHours"
+                           name="studyHours"
+                           min="0"
+                           max="24"
+                           step="0.1"
+                           placeholder="Example: 3.5">
+
+                </div>
+
+            </div>
+
+
+            <!-- SUBMIT -->
+
+            <button type="submit"
+                    class="submit-btn">
+
+                ➕ Add User
+
+            </button>
+
+
+            <!-- CANCEL -->
+
+            <a href="/admin/users"
+               class="cancel-btn">
+
+                Cancel
+
+            </a>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    const roleSelect =
+        document.getElementById("role");
+
+    const studentDetails =
+        document.getElementById("studentDetails");
+
+    const studentInputs =
+        studentDetails.querySelectorAll("input");
+
+
+    roleSelect.addEventListener("change", function () {
+
+        if (this.value === "STUDENT") {
+
+            // Show student details
+            studentDetails.style.display = "block";
+
+            // Make student fields required
+            studentInputs.forEach(function(input) {
+                input.required = true;
+            });
+
+        } else {
+
+            // Hide student details
+            studentDetails.style.display = "none";
+
+            // Student details are not required for Admin
+            studentInputs.forEach(function(input) {
+                input.required = false;
+                input.value = "";
+            });
+        }
+
+    });
+
+
+    // Extra validation
+
+    document.getElementById("userForm")
+        .addEventListener("submit", function(event) {
+
+            if (roleSelect.value === "STUDENT") {
+
+                let valid = true;
+
+                studentInputs.forEach(function(input) {
+
+                    if (input.value.trim() === "") {
+                        valid = false;
+                    }
+
+                });
+
+                if (!valid) {
+
+                    event.preventDefault();
+
+                    alert(
+                        "Please fill all student details."
+                    );
+                }
+            }
+
+        });
+
+</script>
+
+</body>
+
+</html>

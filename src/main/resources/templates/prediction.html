@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Performance Prediction</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            background: #f4f6fb;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 22px 40px;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 26px;
+        }
+
+        .back {
+            background: white;
+            color: #667eea;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .container {
+            padding: 40px;
+            max-width: 1000px;
+            margin: auto;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 7px;
+            font-weight: bold;
+            color: #444;
+        }
+
+        select,
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        .details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 25px;
+        }
+
+        .detail-box {
+            background: #f4f6fb;
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .detail-box span {
+            display: block;
+            color: #777;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .detail-box strong {
+            color: #333;
+            font-size: 17px;
+        }
+
+        .btn {
+            margin-top: 25px;
+            padding: 12px 25px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .btn:hover {
+            background: #5568d9;
+        }
+
+        .history-btn {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 12px 25px;
+            background: #764ba2;
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        #result {
+            margin-top: 25px;
+            padding: 15px;
+            border-radius: 8px;
+            background: #f4f6fb;
+            font-size: 18px;
+            font-weight: bold;
+            display: none;
+        }
+
+        @media (max-width: 700px) {
+
+            .container {
+                padding: 20px;
+            }
+
+            .details {
+                grid-template-columns: 1fr;
+            }
+
+            .header {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 20px;
+            }
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="header">
+
+    <h1>
+        Student Performance Prediction System
+    </h1>
+
+    <a href="/admin/dashboard" class="back">
+        ← Back
+    </a>
+
+</div>
+
+
+<div class="container">
+
+    <div class="card">
+
+        <h2>
+            📊 Performance Prediction
+        </h2>
+
+
+        <!-- STUDENT SELECTION -->
+
+        <label for="studentSelect">
+            Select Student
+        </label>
+
+        <select id="studentSelect"
+                onchange="loadStudent()">
+
+            <option value="">
+                -- Select Student --
+            </option>
+
+            <option th:each="student : ${students}"
+                    th:value="${student.studentId}"
+                    th:data-name="${student.name}"
+                    th:data-department="${student.department}"
+                    th:data-attendance="${student.attendance}"
+                    th:data-internal="${student.internalMark}"
+                    th:data-assignment="${student.assignmentMark}"
+                    th:data-previous="${student.previousMark}"
+                    th:data-study="${student.studyHours}"
+                    th:text="${student.studentId + ' - ' + student.name}">
+            </option>
+
+        </select>
+
+
+        <!-- STUDENT DETAILS -->
+
+        <div class="details">
+
+            <div class="detail-box">
+                <span>Student Name</span>
+                <strong id="name">-</strong>
+            </div>
+
+            <div class="detail-box">
+                <span>Department</span>
+                <strong id="department">-</strong>
+            </div>
+
+            <div class="detail-box">
+                <span>Attendance</span>
+                <strong id="attendance">-</strong>
+            </div>
+
+            <div class="detail-box">
+                <span>Internal Mark</span>
+                <strong id="internal">-</strong>
+            </div>
+
+            <div class="detail-box">
+                <span>Assignment Mark</span>
+                <strong id="assignment">-</strong>
+            </div>
+
+            <div class="detail-box">
+                <span>Previous Mark</span>
+                <strong id="previous">-</strong>
+            </div>
+
+            <div class="detail-box">
+                <span>Study Hours</span>
+                <strong id="study">-</strong>
+            </div>
+
+        </div>
+
+
+        <!-- PREDICT BUTTON -->
+
+        <button class="btn"
+                onclick="predictPerformance()">
+
+            Predict Performance
+
+        </button>
+
+
+        <!-- RESULT -->
+
+        <div id="result"></div>
+
+
+        <!-- HISTORY -->
+
+        <br>
+
+        <a href="/admin/prediction-history"
+           class="history-btn">
+
+            📋 View Prediction History
+
+        </a>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    function loadStudent() {
+
+        const select =
+            document.getElementById("studentSelect");
+
+        const option =
+            select.options[select.selectedIndex];
+
+        if (!option.value) {
+
+            document.getElementById("name").innerText = "-";
+            document.getElementById("department").innerText = "-";
+            document.getElementById("attendance").innerText = "-";
+            document.getElementById("internal").innerText = "-";
+            document.getElementById("assignment").innerText = "-";
+            document.getElementById("previous").innerText = "-";
+            document.getElementById("study").innerText = "-";
+
+            return;
+        }
+
+        document.getElementById("name").innerText =
+            option.dataset.name;
+
+        document.getElementById("department").innerText =
+            option.dataset.department;
+
+        document.getElementById("attendance").innerText =
+            option.dataset.attendance;
+
+        document.getElementById("internal").innerText =
+            option.dataset.internal;
+
+        document.getElementById("assignment").innerText =
+            option.dataset.assignment;
+
+        document.getElementById("previous").innerText =
+            option.dataset.previous;
+
+        document.getElementById("study").innerText =
+            option.dataset.study;
+    }
+
+
+    function predictPerformance() {
+
+        const select =
+            document.getElementById("studentSelect");
+
+        if (!select.value) {
+
+            alert("Please select a student.");
+
+            return;
+        }
+
+        const option =
+            select.options[select.selectedIndex];
+
+
+        const attendance =
+            parseFloat(option.dataset.attendance);
+
+        const internal =
+            parseFloat(option.dataset.internal);
+
+        const assignment =
+            parseFloat(option.dataset.assignment);
+
+        const previous =
+            parseFloat(option.dataset.previous);
+
+        const studyHours =
+            parseFloat(option.dataset.study);
+
+
+        const studyPercentage =
+            Math.min(studyHours * 10, 100);
+
+
+        const score =
+            (attendance * 0.20) +
+            (internal * 0.20) +
+            (assignment * 0.15) +
+            (previous * 0.25) +
+            (studyPercentage * 0.20);
+
+
+        let performance;
+
+
+        if (score >= 80) {
+
+            performance = "Excellent";
+
+        } else if (score >= 60) {
+
+            performance = "Good";
+
+        } else if (score >= 40) {
+
+            performance = "Average";
+
+        } else {
+
+            performance = "Poor";
+
+        }
+
+
+        const result =
+            document.getElementById("result");
+
+        result.style.display = "block";
+
+        result.innerHTML =
+            "Predicted Performance: <strong>"
+            + performance
+            + "</strong><br><br>"
+            + "Performance Score: "
+            + score.toFixed(2);
+
+    }
+
+</script>
+
+</body>
+
+</html>

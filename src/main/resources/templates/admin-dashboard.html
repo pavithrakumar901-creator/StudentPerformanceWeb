@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Admin Dashboard - Student Performance</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #f4f6fb;
+        }
+
+        /* ================= HEADER ================= */
+
+        .header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 22px 40px;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 26px;
+        }
+
+        .logout {
+            background: white;
+            color: #667eea;
+            padding: 10px 20px;
+
+            border-radius: 8px;
+
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .logout:hover {
+            background: #f0f0f0;
+        }
+
+        /* ================= MAIN CONTAINER ================= */
+
+        .container {
+            padding: 40px;
+        }
+
+        .welcome {
+            margin-bottom: 30px;
+        }
+
+        .welcome h2 {
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .welcome p {
+            color: #777;
+        }
+
+        /* ================= CARDS ================= */
+
+        .cards {
+            display: grid;
+
+            grid-template-columns: repeat(2, 1fr);
+
+            gap: 25px;
+
+            max-width: 900px;
+        }
+
+        .card {
+            background: white;
+
+            padding: 30px;
+
+            border-radius: 15px;
+
+            box-shadow:
+                    0 5px 20px
+                    rgba(0, 0, 0, 0.1);
+
+            text-align: center;
+        }
+
+        .card h3 {
+            color: #333;
+
+            margin-bottom: 12px;
+        }
+
+        .card p {
+            color: #777;
+
+            margin-bottom: 20px;
+
+            line-height: 1.5;
+        }
+
+        /* ================= BUTTON ================= */
+
+        .btn {
+            display: inline-block;
+
+            background: #667eea;
+
+            color: white;
+
+            padding: 11px 22px;
+
+            border-radius: 8px;
+
+            text-decoration: none;
+
+            font-weight: bold;
+
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            background: #5568d9;
+
+            transform: translateY(-2px);
+        }
+
+        /* ================= MOBILE ================= */
+
+        @media (max-width: 700px) {
+
+            .cards {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 20px;
+            }
+
+            .header {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 20px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     HEADER
+===================================================== -->
+
+<div class="header">
+
+    <h1>
+        Student Performance Prediction System
+    </h1>
+
+    <a href="/" class="logout">
+        Logout
+    </a>
+
+</div>
+
+
+<!-- =====================================================
+     MAIN CONTENT
+===================================================== -->
+
+<div class="container">
+
+
+    <!-- ================= WELCOME ================= -->
+
+    <div class="welcome">
+
+        <h2>
+            Admin Dashboard
+        </h2>
+
+        <p>
+            Welcome, Admin! Manage students and performance predictions.
+        </p>
+
+    </div>
+
+
+    <!-- ================= CARDS ================= -->
+
+    <div class="cards">
+
+
+        <!-- =================================================
+             STUDENT MANAGEMENT
+        ================================================== -->
+
+        <div class="card">
+
+            <h3>
+                👨‍🎓 Student Management
+            </h3>
+
+            <p>
+                Add and view student details.
+            </p>
+
+            <a href="/admin/students" class="btn">
+                Manage Students
+            </a>
+
+        </div>
+
+
+        <!-- =================================================
+             PERFORMANCE PREDICTION
+        ================================================== -->
+
+        <div class="card">
+
+            <h3>
+                📊 Performance Prediction
+            </h3>
+
+            <p>
+                Predict student performance based on academic data.
+            </p>
+
+            <a href="/admin/prediction" class="btn">
+                Predict Performance
+            </a>
+
+        </div>
+
+
+        <!-- =================================================
+             PREDICTION HISTORY
+        ================================================== -->
+
+        <div class="card">
+
+            <h3>
+                📋 Prediction History
+            </h3>
+
+            <p>
+                View previous performance predictions.
+            </p>
+
+            <a href="/admin/prediction-history" class="btn">
+                View History
+            </a>
+
+        </div>
+
+
+        <!-- =================================================
+             USER MANAGEMENT
+        ================================================== -->
+
+        <div class="card">
+
+            <h3>
+                👥 User Management
+            </h3>
+
+            <p>
+                Manage admin and student login accounts.
+            </p>
+
+            <a href="/admin/users" class="btn">
+                Manage Users
+            </a>
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+
+</body>
+
+</html>
