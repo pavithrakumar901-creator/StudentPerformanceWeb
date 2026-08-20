@@ -144,6 +144,14 @@
             display: none;
         }
 
+        .success {
+            color: green;
+        }
+
+        .error {
+            color: red;
+        }
+
         @media (max-width: 700px) {
 
             .container {
@@ -224,38 +232,79 @@
         <div class="details">
 
             <div class="detail-box">
+
                 <span>Student Name</span>
-                <strong id="name">-</strong>
+
+                <strong id="name">
+                    -
+                </strong>
+
             </div>
 
+
             <div class="detail-box">
+
                 <span>Department</span>
-                <strong id="department">-</strong>
+
+                <strong id="department">
+                    -
+                </strong>
+
             </div>
 
+
             <div class="detail-box">
+
                 <span>Attendance</span>
-                <strong id="attendance">-</strong>
+
+                <strong id="attendance">
+                    -
+                </strong>
+
             </div>
 
+
             <div class="detail-box">
+
                 <span>Internal Mark</span>
-                <strong id="internal">-</strong>
+
+                <strong id="internal">
+                    -
+                </strong>
+
             </div>
 
+
             <div class="detail-box">
+
                 <span>Assignment Mark</span>
-                <strong id="assignment">-</strong>
+
+                <strong id="assignment">
+                    -
+                </strong>
+
             </div>
 
+
             <div class="detail-box">
+
                 <span>Previous Mark</span>
-                <strong id="previous">-</strong>
+
+                <strong id="previous">
+                    -
+                </strong>
+
             </div>
 
+
             <div class="detail-box">
+
                 <span>Study Hours</span>
-                <strong id="study">-</strong>
+
+                <strong id="study">
+                    -
+                </strong>
+
             </div>
 
         </div>
@@ -264,6 +313,7 @@
         <!-- PREDICT BUTTON -->
 
         <button class="btn"
+                id="predictButton"
                 onclick="predictPerformance()">
 
             Predict Performance
@@ -294,6 +344,11 @@
 
 <script>
 
+
+    // ============================================
+    // LOAD SELECTED STUDENT
+    // ============================================
+
     function loadStudent() {
 
         const select =
@@ -302,46 +357,68 @@
         const option =
             select.options[select.selectedIndex];
 
+
         if (!option.value) {
 
             document.getElementById("name").innerText = "-";
+
             document.getElementById("department").innerText = "-";
+
             document.getElementById("attendance").innerText = "-";
+
             document.getElementById("internal").innerText = "-";
+
             document.getElementById("assignment").innerText = "-";
+
             document.getElementById("previous").innerText = "-";
+
             document.getElementById("study").innerText = "-";
 
             return;
         }
 
+
         document.getElementById("name").innerText =
             option.dataset.name;
+
 
         document.getElementById("department").innerText =
             option.dataset.department;
 
+
         document.getElementById("attendance").innerText =
             option.dataset.attendance;
+
 
         document.getElementById("internal").innerText =
             option.dataset.internal;
 
+
         document.getElementById("assignment").innerText =
             option.dataset.assignment;
+
 
         document.getElementById("previous").innerText =
             option.dataset.previous;
 
+
         document.getElementById("study").innerText =
             option.dataset.study;
+
     }
 
+
+    // ============================================
+    // PREDICT PERFORMANCE
+    // ============================================
 
     function predictPerformance() {
 
         const select =
             document.getElementById("studentSelect");
+
+
+        // Check student selection
 
         if (!select.value) {
 
@@ -350,29 +427,46 @@
             return;
         }
 
+
         const option =
             select.options[select.selectedIndex];
+
+
+        const studentId =
+            select.value;
 
 
         const attendance =
             parseFloat(option.dataset.attendance);
 
+
         const internal =
             parseFloat(option.dataset.internal);
+
 
         const assignment =
             parseFloat(option.dataset.assignment);
 
+
         const previous =
             parseFloat(option.dataset.previous);
+
 
         const studyHours =
             parseFloat(option.dataset.study);
 
 
+        // ============================================
+        // STUDY HOURS TO PERCENTAGE
+        // ============================================
+
         const studyPercentage =
             Math.min(studyHours * 10, 100);
 
+
+        // ============================================
+        // PERFORMANCE SCORE
+        // ============================================
 
         const score =
             (attendance * 0.20) +
@@ -382,6 +476,10 @@
             (studyPercentage * 0.20);
 
 
+        // ============================================
+        // PERFORMANCE RESULT
+        // ============================================
+
         let performance;
 
 
@@ -389,36 +487,173 @@
 
             performance = "Excellent";
 
-        } else if (score >= 60) {
+        }
+        else if (score >= 60) {
 
             performance = "Good";
 
-        } else if (score >= 40) {
+        }
+        else if (score >= 40) {
 
             performance = "Average";
 
-        } else {
+        }
+        else {
 
             performance = "Poor";
 
         }
 
 
+        // ============================================
+        // DISPLAY RESULT
+        // ============================================
+
         const result =
             document.getElementById("result");
 
+
         result.style.display = "block";
+
+
+        result.className = "";
+
 
         result.innerHTML =
             "Predicted Performance: <strong>"
             + performance
             + "</strong><br><br>"
             + "Performance Score: "
-            + score.toFixed(2);
+            + score.toFixed(2)
+            + "<br><br>"
+            + "Saving prediction...";
+
+
+        // ============================================
+        // DISABLE BUTTON WHILE SAVING
+        // ============================================
+
+        const button =
+            document.getElementById("predictButton");
+
+
+        button.disabled = true;
+
+        button.innerText = "Saving...";
+
+
+        // ============================================
+        // SEND PREDICTION TO SPRING BOOT
+        // ============================================
+
+        const formData =
+            new URLSearchParams();
+
+
+        formData.append(
+            "studentId",
+            studentId
+        );
+
+
+        formData.append(
+            "performance",
+            performance
+        );
+
+
+        fetch("/admin/save-prediction", {
+
+            method: "POST",
+
+            headers: {
+                "Content-Type":
+                    "application/x-www-form-urlencoded"
+            },
+
+            body: formData.toString()
+
+        })
+
+
+            .then(response => {
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        "Server returned " + response.status
+                    );
+
+                }
+
+                return response.text();
+
+            })
+
+
+            .then(data => {
+
+                if (data.trim() === "success") {
+
+                    result.className = "success";
+
+                    result.innerHTML =
+                        "Predicted Performance: <strong>"
+                        + performance
+                        + "</strong><br><br>"
+                        + "Performance Score: "
+                        + score.toFixed(2)
+                        + "<br><br>"
+                        + "✅ Prediction saved successfully!";
+
+                }
+                else {
+
+                    throw new Error(
+                        "Prediction was not saved"
+                    );
+
+                }
+
+            })
+
+
+            .catch(error => {
+
+                console.error(
+                    "Prediction save error:",
+                    error
+                );
+
+
+                result.className = "error";
+
+
+                result.innerHTML =
+                    "Predicted Performance: <strong>"
+                    + performance
+                    + "</strong><br><br>"
+                    + "Performance Score: "
+                    + score.toFixed(2)
+                    + "<br><br>"
+                    + "❌ Failed to save prediction.";
+
+            })
+
+
+            .finally(() => {
+
+                button.disabled = false;
+
+                button.innerText =
+                    "Predict Performance";
+
+            });
 
     }
 
 </script>
+
 
 </body>
 
