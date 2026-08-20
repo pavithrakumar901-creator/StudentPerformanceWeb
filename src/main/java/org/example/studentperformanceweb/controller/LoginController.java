@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.Optional;
+
 @Controller
 public class LoginController {
 
@@ -36,25 +38,31 @@ public class LoginController {
             @RequestParam("password") String password,
             Model model) {
 
-        User user = userRepository.findByUsername(username);
+        Optional<User> userOptional =
+                userRepository.findByUsername(username);
 
         // Username not found
-        if (user == null) {
+        if (userOptional.isEmpty()) {
+
             model.addAttribute(
                     "error",
                     "Invalid username or password"
             );
+
             return "login";
         }
 
+        User user = userOptional.get();
+
         // Password check
-        if (user.getPassword() == null
-                || !user.getPassword().equals(password)) {
+        if (user.getPassword() == null ||
+                !user.getPassword().equals(password)) {
 
             model.addAttribute(
                     "error",
                     "Invalid username or password"
             );
+
             return "login";
         }
 
@@ -63,6 +71,7 @@ public class LoginController {
         // ==========================================
 
         if ("ADMIN".equalsIgnoreCase(user.getRole())) {
+
             return "redirect:/admin/dashboard";
         }
 
@@ -71,13 +80,11 @@ public class LoginController {
         // ==========================================
 
         if ("STUDENT".equalsIgnoreCase(user.getRole())) {
+
             return "redirect:/student/dashboard";
         }
 
-        // ==========================================
-        // INVALID ROLE
-        // ==========================================
-
+        // Unknown role
         model.addAttribute(
                 "error",
                 "Invalid user role"
