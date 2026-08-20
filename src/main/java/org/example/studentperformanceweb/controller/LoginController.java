@@ -8,10 +8,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import jakarta.servlet.http.HttpSession;
-
-import java.util.Optional;
-
 @Controller
 public class LoginController {
 
@@ -21,112 +17,70 @@ public class LoginController {
         this.userRepository = userRepository;
     }
 
-
-    // =====================================================
+    // ==========================================
     // SHOW LOGIN PAGE
-    // =====================================================
+    // ==========================================
 
-    @GetMapping("/")
-    public String showLoginPage() {
-
+    @GetMapping("/login")
+    public String loginPage() {
         return "login";
     }
 
-
-    // =====================================================
+    // ==========================================
     // PROCESS LOGIN
-    // =====================================================
+    // ==========================================
 
     @PostMapping("/login")
     public String login(
             @RequestParam("username") String username,
             @RequestParam("password") String password,
-            Model model,
-            HttpSession session) {
+            Model model) {
 
+        User user = userRepository.findByUsername(username);
 
-        // Remove extra spaces
-        username = username.trim();
-
-
-        // Find user from database
-        Optional<User> userOptional =
-                userRepository.findByUsername(username);
-
-
-        // =================================================
-        // USER FOUND
-        // =================================================
-
-        if (userOptional.isPresent()) {
-
-            User user = userOptional.get();
-
-
-            // =================================================
-            // CHECK PASSWORD
-            // =================================================
-
-            if (user.getPassword().equals(password)) {
-
-
-                // Save logged-in user in session
-                session.setAttribute("loggedInUser", user);
-
-                // Save username
-                session.setAttribute("username", user.getUsername());
-
-                // Save role
-                session.setAttribute("role", user.getRole());
-
-
-                // =================================================
-                // ADMIN LOGIN
-                // =================================================
-
-                if ("ADMIN".equalsIgnoreCase(user.getRole())) {
-
-                    return "redirect:/admin/dashboard";
-                }
-
-
-                // =================================================
-                // STUDENT LOGIN
-                // =================================================
-
-                if ("STUDENT".equalsIgnoreCase(user.getRole())) {
-
-                    // Save student ID in session
-                    session.setAttribute(
-                            "studentId",
-                            user.getStudentId()
-                    );
-
-                    return "redirect:/student/dashboard";
-                }
-
-
-                // =================================================
-                // INVALID ROLE
-                // =================================================
-
-                model.addAttribute(
-                        "error",
-                        "Invalid user role!"
-                );
-
-                return "login";
-            }
+        // Username not found
+        if (user == null) {
+            model.addAttribute(
+                    "error",
+                    "Invalid username or password"
+            );
+            return "login";
         }
 
+        // Password check
+        if (user.getPassword() == null
+                || !user.getPassword().equals(password)) {
 
-        // =================================================
-        // INVALID LOGIN
-        // =================================================
+            model.addAttribute(
+                    "error",
+                    "Invalid username or password"
+            );
+            return "login";
+        }
+
+        // ==========================================
+        // ADMIN LOGIN
+        // ==========================================
+
+        if ("ADMIN".equalsIgnoreCase(user.getRole())) {
+            return "redirect:/admin/dashboard";
+        }
+
+        // ==========================================
+        // STUDENT LOGIN
+        // ==========================================
+
+        if ("STUDENT".equalsIgnoreCase(user.getRole())) {
+            return "redirect:/student/dashboard";
+        }
+
+        // ==========================================
+        // INVALID ROLE
+        // ==========================================
 
         model.addAttribute(
                 "error",
-                "Invalid username or password!"
+                "Invalid user role"
         );
 
         return "login";
