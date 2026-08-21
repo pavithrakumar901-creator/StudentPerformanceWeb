@@ -17,19 +17,17 @@ public class LoginController {
         this.userRepository = userRepository;
     }
 
-    // ==========================================
+    // ================================
     // SHOW LOGIN PAGE
-    // ==========================================
-
+    // ================================
     @GetMapping("/login")
     public String loginPage() {
         return "login";
     }
 
-    // ==========================================
+    // ================================
     // PROCESS LOGIN
-    // ==========================================
-
+    // ================================
     @PostMapping("/login")
     public String login(
             @RequestParam("username") String username,
@@ -39,52 +37,39 @@ public class LoginController {
         User user = userRepository.findByUsername(username)
                 .orElse(null);
 
-        // ==========================================
-        // USERNAME NOT FOUND
-        // ==========================================
-
+        // Username not found
         if (user == null) {
             model.addAttribute(
                     "error",
                     "Invalid username or password"
             );
-
             return "login";
         }
 
-        // ==========================================
-        // PASSWORD CHECK
-        // ==========================================
-
+        // Password check
         if (!user.getPassword().equals(password)) {
             model.addAttribute(
                     "error",
                     "Invalid username or password"
             );
-
             return "login";
         }
 
-        // ==========================================
+        // ================================
         // ADMIN LOGIN
-        // ==========================================
-
+        // ================================
         if ("ADMIN".equalsIgnoreCase(user.getRole())) {
             return "redirect:/admin/dashboard";
         }
 
-        // ==========================================
+        // ================================
         // STUDENT LOGIN
-        // ==========================================
-
+        // ================================
         if ("STUDENT".equalsIgnoreCase(user.getRole())) {
             return "redirect:/student/dashboard";
         }
 
-        // ==========================================
-        // UNKNOWN ROLE
-        // ==========================================
-
+        // Unknown role
         model.addAttribute(
                 "error",
                 "Invalid user role"
