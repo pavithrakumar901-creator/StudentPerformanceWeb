@@ -4,9 +4,9 @@ import org.example.studentperformanceweb.entity.User;
 import org.example.studentperformanceweb.repository.UserRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @Controller
 public class LoginController {
@@ -17,64 +17,144 @@ public class LoginController {
         this.userRepository = userRepository;
     }
 
-    // ================================
-    // SHOW LOGIN PAGE
-    // ================================
+    // =========================================
+    // LOGIN PAGE
+    // =========================================
+
     @GetMapping("/login")
-    public String loginPage() {
+    public String loginPage(
+            @RequestParam(value = "error", required = false) String error,
+            @RequestParam(value = "logout", required = false) String logout,
+            Model model) {
+
+        if (error != null) {
+            model.addAttribute(
+                    "error",
+                    "Invalid username or password!"
+            );
+        }
+
+        if (logout != null) {
+            model.addAttribute(
+                    "success",
+                    "You have been logged out successfully."
+            );
+        }
+
         return "login";
     }
 
-    // ================================
-    // PROCESS LOGIN
-    // ================================
+    // =========================================
+    // LOGIN PROCESS
+    // =========================================
+
     @PostMapping("/login")
     public String login(
             @RequestParam("username") String username,
             @RequestParam("password") String password,
             Model model) {
 
-        User user = userRepository.findByUsername(username)
-                .orElse(null);
+        username = username.trim();
 
-        // Username not found
-        if (user == null) {
+        Optional<User> userOptional =
+                userRepository.findByUsername(username);
+
+        // =====================================
+        // USER NOT FOUND
+        // =====================================
+
+        if (userOptional.isEmpty()) {
+
             model.addAttribute(
                     "error",
-                    "Invalid username or password"
+                    "Invalid username or password!"
             );
+
             return "login";
         }
 
-        // Password check
+        User user = userOptional.get();
+
+        // =====================================
+        // PASSWORD CHECK
+        // =====================================
+
         if (!user.getPassword().equals(password)) {
+
             model.addAttribute(
                     "error",
-                    "Invalid username or password"
+                    "Invalid username or password!"
             );
+
             return "login";
         }
 
-        // ================================
+        // =====================================
+        // ROLE CHECK
+        // =====================================
+
+        String role = user.getRole();
+
+        if (role == null) {
+
+            model.addAttribute(
+                    "error",
+                    "User role is not configured!"
+            );
+
+            return "login";
+        }
+
+        role = role.trim().toUpperCase();
+
+        // =====================================
         // ADMIN LOGIN
-        // ================================
-        if ("ADMIN".equalsIgnoreCase(user.getRole())) {
+        // =====================================
+
+        if ("ADMIN".equals(role)) {
+
             return "redirect:/admin/dashboard";
         }
 
-        // ================================
+        // =====================================
         // STUDENT LOGIN
-        // ================================
-        if ("STUDENT".equalsIgnoreCase(user.getRole())) {
-            return "redirect:/student/dashboard";
+        // =====================================
+
+        if ("STUDENT".equals(role)) {
+
+            if (user.getStudentId() == null) {
+
+                model.addAttribute(
+                        "error",
+                        "Student account is not linked to a student!"
+                );
+
+                return "login";
+            }
+
+            return "redirect:/student/dashboard?studentId="
+                    + user.getStudentId();
         }
 
-        // Unknown role
+        // =====================================
+        // INVALID ROLE
+        // =====================================
+
         model.addAttribute(
                 "error",
-                "Invalid user role"
+                "Invalid user role!"
         );
 
         return "login";
+    }
+
+    // =========================================
+    // LOGOUT
+    // =========================================
+
+    @GetMapping("/logout")
+    public String logout() {
+
+        return "redirect:/login?logout=true";
     }
 }

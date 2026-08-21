@@ -1,135 +1,348 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
 
-    <title>Login - Student Performance Prediction</title>
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Student Performance Prediction - Login</title>
 
     <style>
+
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
             font-family: Arial, sans-serif;
         }
 
         body {
             min-height: 100vh;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+
             display: flex;
             justify-content: center;
             align-items: center;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+
+            padding: 20px;
         }
 
-        .login-box {
-            width: 380px;
+        .login-container {
+            width: 100%;
+            max-width: 430px;
+        }
+
+        .login-card {
             background: white;
+
             padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+
+            border-radius: 18px;
+
+            box-shadow:
+                    0 15px 40px rgba(0, 0, 0, 0.20);
+
+            text-align: center;
+        }
+
+        .logo {
+            width: 75px;
+            height: 75px;
+
+            margin: 0 auto 20px;
+
+            border-radius: 50%;
+
+            background: linear-gradient(
+                    135deg,
+                    #667eea,
+                    #764ba2
+            );
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            color: white;
+
+            font-size: 32px;
         }
 
         h1 {
-            text-align: center;
             color: #333;
-            margin-bottom: 10px;
+
+            font-size: 25px;
+
+            margin-bottom: 8px;
         }
 
         .subtitle {
-            text-align: center;
             color: #777;
+
+            font-size: 14px;
+
             margin-bottom: 30px;
         }
 
-        label {
+        .form-group {
+            text-align: left;
+
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
             display: block;
-            margin-bottom: 7px;
-            color: #333;
+
+            color: #444;
+
             font-weight: bold;
+
+            font-size: 14px;
+
+            margin-bottom: 8px;
         }
 
-        input {
+        .form-group input {
             width: 100%;
-            padding: 12px;
-            margin-bottom: 20px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 15px;
-        }
 
-        input:focus {
+            padding: 13px 15px;
+
+            border: 1px solid #ccc;
+
+            border-radius: 9px;
+
             outline: none;
+
+            font-size: 15px;
+
+            transition: 0.3s;
+        }
+
+        .form-group input:focus {
             border-color: #667eea;
+
+            box-shadow:
+                    0 0 0 3px rgba(102, 126, 234, 0.12);
         }
 
-        button {
+        .login-button {
             width: 100%;
-            padding: 13px;
+
+            padding: 14px;
+
             border: none;
-            border-radius: 8px;
-            background: #667eea;
+
+            border-radius: 9px;
+
+            background: linear-gradient(
+                    135deg,
+                    #667eea,
+                    #764ba2
+            );
+
             color: white;
+
             font-size: 16px;
+
             font-weight: bold;
+
             cursor: pointer;
+
+            transition: 0.3s;
+
+            margin-top: 5px;
         }
 
-        button:hover {
-            background: #5568d9;
+        .login-button:hover {
+            transform: translateY(-1px);
+
+            box-shadow:
+                    0 6px 15px rgba(102, 126, 234, 0.30);
         }
 
-        .error {
-            background: #ffe5e5;
-            color: #d8000c;
-            padding: 10px;
-            border-radius: 6px;
+        .login-button:active {
+            transform: translateY(0);
+        }
+
+        .error-message {
+            background: #ffe8e8;
+
+            color: #d93025;
+
+            border: 1px solid #ffcaca;
+
+            padding: 12px;
+
+            border-radius: 8px;
+
             margin-bottom: 20px;
-            text-align: center;
+
+            font-size: 14px;
         }
+
+        .success-message {
+            background: #e8f8ed;
+
+            color: #188038;
+
+            border: 1px solid #b7e1c2;
+
+            padding: 12px;
+
+            border-radius: 8px;
+
+            margin-bottom: 20px;
+
+            font-size: 14px;
+        }
+
+        .footer {
+            margin-top: 25px;
+
+            color: #888;
+
+            font-size: 12px;
+        }
+
+        .footer strong {
+            color: #667eea;
+        }
+
+        @media (max-width: 500px) {
+
+            .login-card {
+                padding: 30px 22px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+        }
+
     </style>
+
 </head>
+
 
 <body>
 
-<div class="login-box">
+<div class="login-container">
 
-    <h1>Student Performance</h1>
+    <div class="login-card">
 
-    <p class="subtitle">Login to continue</p>
+        <!-- LOGO -->
 
-    <!-- Error message -->
-    <div class="error" th:if="${error}" th:text="${error}"></div>
+        <div class="logo">
+            🎓
+        </div>
 
-    <form action="/login" method="post">
 
-        <label for="username">Username</label>
+        <!-- TITLE -->
 
-        <input
-                type="text"
-                id="username"
-                name="username"
-                placeholder="Enter username"
-                required
-        >
+        <h1>
+            Student Performance
+        </h1>
 
-        <label for="password">Password</label>
+        <p class="subtitle">
+            Prediction System
+        </p>
 
-        <input
-                type="password"
-                id="password"
-                name="password"
-                placeholder="Enter password"
-                required
-        >
 
-        <button type="submit">
-            Login
-        </button>
+        <!-- ERROR MESSAGE -->
 
-    </form>
+        <div th:if="${error}"
+             class="error-message"
+             th:text="${error}">
+        </div>
+
+
+        <!-- SUCCESS MESSAGE -->
+
+        <div th:if="${success}"
+             class="success-message"
+             th:text="${success}">
+        </div>
+
+
+        <!-- LOGIN FORM -->
+
+        <form action="/login"
+              method="post">
+
+
+            <!-- USERNAME -->
+
+            <div class="form-group">
+
+                <label for="username">
+                    Username
+                </label>
+
+                <input
+                        type="text"
+                        id="username"
+                        name="username"
+                        placeholder="Enter your username"
+                        autocomplete="username"
+                        required>
+
+            </div>
+
+
+            <!-- PASSWORD -->
+
+            <div class="form-group">
+
+                <label for="password">
+                    Password
+                </label>
+
+                <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Enter your password"
+                        autocomplete="current-password"
+                        required>
+
+            </div>
+
+
+            <!-- LOGIN BUTTON -->
+
+            <button
+                    type="submit"
+                    class="login-button">
+
+                Login
+
+            </button>
+
+        </form>
+
+
+        <!-- FOOTER -->
+
+        <div class="footer">
+
+            <strong>Student Performance Prediction System</strong>
+
+            <br><br>
+
+            Secure Login Portal
+
+        </div>
+
+    </div>
 
 </div>
 
+
 </body>
+
 </html>
