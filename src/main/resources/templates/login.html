@@ -22,10 +22,18 @@
 
         body {
             min-height: 100vh;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+
+            background:
+                    linear-gradient(
+                            135deg,
+                            #667eea,
+                            #764ba2
+                    );
 
             display: flex;
+
             justify-content: center;
+
             align-items: center;
 
             padding: 20px;
@@ -44,7 +52,8 @@
             border-radius: 18px;
 
             box-shadow:
-                    0 15px 40px rgba(0, 0, 0, 0.20);
+                    0 15px 40px
+                    rgba(0, 0, 0, 0.20);
 
             text-align: center;
         }
@@ -57,14 +66,17 @@
 
             border-radius: 50%;
 
-            background: linear-gradient(
-                    135deg,
-                    #667eea,
-                    #764ba2
-            );
+            background:
+                    linear-gradient(
+                            135deg,
+                            #667eea,
+                            #764ba2
+                    );
 
             display: flex;
+
             justify-content: center;
+
             align-items: center;
 
             color: white;
@@ -126,7 +138,8 @@
             border-color: #667eea;
 
             box-shadow:
-                    0 0 0 3px rgba(102, 126, 234, 0.12);
+                    0 0 0 3px
+                    rgba(102, 126, 234, 0.12);
         }
 
         .login-button {
@@ -138,11 +151,12 @@
 
             border-radius: 9px;
 
-            background: linear-gradient(
-                    135deg,
-                    #667eea,
-                    #764ba2
-            );
+            background:
+                    linear-gradient(
+                            135deg,
+                            #667eea,
+                            #764ba2
+                    );
 
             color: white;
 
@@ -161,7 +175,8 @@
             transform: translateY(-1px);
 
             box-shadow:
-                    0 6px 15px rgba(102, 126, 234, 0.30);
+                    0 6px 15px
+                    rgba(102, 126, 234, 0.30);
         }
 
         .login-button:active {
@@ -221,7 +236,6 @@
             h1 {
                 font-size: 22px;
             }
-
         }
 
     </style>
@@ -234,6 +248,7 @@
 <div class="login-container">
 
     <div class="login-card">
+
 
         <!-- LOGO -->
 
@@ -253,7 +268,7 @@
         </p>
 
 
-        <!-- ERROR MESSAGE -->
+        <!-- ERROR -->
 
         <div th:if="${error}"
              class="error-message"
@@ -261,7 +276,7 @@
         </div>
 
 
-        <!-- SUCCESS MESSAGE -->
+        <!-- SUCCESS -->
 
         <div th:if="${success}"
              class="success-message"
@@ -330,7 +345,9 @@
 
         <div class="footer">
 
-            <strong>Student Performance Prediction System</strong>
+            <strong>
+                Student Performance Prediction System
+            </strong>
 
             <br><br>
 
@@ -341,7 +358,6 @@
     </div>
 
 </div>
-
 
 </body>
 

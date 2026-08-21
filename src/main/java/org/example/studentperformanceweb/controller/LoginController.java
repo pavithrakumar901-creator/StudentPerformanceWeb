@@ -4,7 +4,9 @@ import org.example.studentperformanceweb.entity.User;
 import org.example.studentperformanceweb.repository.UserRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Optional;
 
@@ -18,13 +20,17 @@ public class LoginController {
     }
 
     // =========================================
-    // LOGIN PAGE
+    // SHOW LOGIN PAGE
     // =========================================
 
     @GetMapping("/login")
     public String loginPage(
-            @RequestParam(value = "error", required = false) String error,
-            @RequestParam(value = "logout", required = false) String logout,
+            @RequestParam(value = "error", required = false)
+            String error,
+
+            @RequestParam(value = "logout", required = false)
+            String logout,
+
             Model model) {
 
         if (error != null) {
@@ -44,14 +50,19 @@ public class LoginController {
         return "login";
     }
 
+
     // =========================================
-    // LOGIN PROCESS
+    // PROCESS LOGIN
     // =========================================
 
     @PostMapping("/login")
     public String login(
-            @RequestParam("username") String username,
-            @RequestParam("password") String password,
+            @RequestParam("username")
+            String username,
+
+            @RequestParam("password")
+            String password,
+
             Model model) {
 
         username = username.trim();
@@ -59,9 +70,9 @@ public class LoginController {
         Optional<User> userOptional =
                 userRepository.findByUsername(username);
 
-        // =====================================
+        // -----------------------------------------
         // USER NOT FOUND
-        // =====================================
+        // -----------------------------------------
 
         if (userOptional.isEmpty()) {
 
@@ -75,11 +86,13 @@ public class LoginController {
 
         User user = userOptional.get();
 
-        // =====================================
-        // PASSWORD CHECK
-        // =====================================
 
-        if (!user.getPassword().equals(password)) {
+        // -----------------------------------------
+        // CHECK PASSWORD
+        // -----------------------------------------
+
+        if (user.getPassword() == null ||
+                !user.getPassword().equals(password)) {
 
             model.addAttribute(
                     "error",
@@ -89,13 +102,14 @@ public class LoginController {
             return "login";
         }
 
-        // =====================================
-        // ROLE CHECK
-        // =====================================
+
+        // -----------------------------------------
+        // CHECK ROLE
+        // -----------------------------------------
 
         String role = user.getRole();
 
-        if (role == null) {
+        if (role == null || role.trim().isEmpty()) {
 
             model.addAttribute(
                     "error",
@@ -105,20 +119,23 @@ public class LoginController {
             return "login";
         }
 
+
         role = role.trim().toUpperCase();
 
-        // =====================================
+
+        // -----------------------------------------
         // ADMIN LOGIN
-        // =====================================
+        // -----------------------------------------
 
         if ("ADMIN".equals(role)) {
 
             return "redirect:/admin/dashboard";
         }
 
-        // =====================================
+
+        // -----------------------------------------
         // STUDENT LOGIN
-        // =====================================
+        // -----------------------------------------
 
         if ("STUDENT".equals(role)) {
 
@@ -136,9 +153,10 @@ public class LoginController {
                     + user.getStudentId();
         }
 
-        // =====================================
+
+        // -----------------------------------------
         // INVALID ROLE
-        // =====================================
+        // -----------------------------------------
 
         model.addAttribute(
                 "error",
@@ -146,15 +164,5 @@ public class LoginController {
         );
 
         return "login";
-    }
-
-    // =========================================
-    // LOGOUT
-    // =========================================
-
-    @GetMapping("/logout")
-    public String logout() {
-
-        return "redirect:/login?logout=true";
     }
 }
