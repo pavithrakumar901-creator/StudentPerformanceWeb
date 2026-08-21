@@ -20,17 +20,22 @@ public class LoginController {
     }
 
     // =========================================
+    // ROOT URL
+    // =========================================
+
+    @GetMapping("/")
+    public String home() {
+        return "redirect:/login";
+    }
+
+    // =========================================
     // SHOW LOGIN PAGE
     // =========================================
 
     @GetMapping("/login")
     public String loginPage(
-            @RequestParam(value = "error", required = false)
-            String error,
-
-            @RequestParam(value = "logout", required = false)
-            String logout,
-
+            @RequestParam(value = "error", required = false) String error,
+            @RequestParam(value = "logout", required = false) String logout,
             Model model) {
 
         if (error != null) {
@@ -50,29 +55,26 @@ public class LoginController {
         return "login";
     }
 
-
     // =========================================
     // PROCESS LOGIN
     // =========================================
 
     @PostMapping("/login")
     public String login(
-            @RequestParam("username")
-            String username,
-
-            @RequestParam("password")
-            String password,
-
+            @RequestParam("username") String username,
+            @RequestParam("password") String password,
             Model model) {
 
+        // Remove unnecessary spaces
         username = username.trim();
 
+        // Find user
         Optional<User> userOptional =
                 userRepository.findByUsername(username);
 
-        // -----------------------------------------
+        // =========================================
         // USER NOT FOUND
-        // -----------------------------------------
+        // =========================================
 
         if (userOptional.isEmpty()) {
 
@@ -86,10 +88,9 @@ public class LoginController {
 
         User user = userOptional.get();
 
-
-        // -----------------------------------------
+        // =========================================
         // CHECK PASSWORD
-        // -----------------------------------------
+        // =========================================
 
         if (user.getPassword() == null ||
                 !user.getPassword().equals(password)) {
@@ -102,10 +103,9 @@ public class LoginController {
             return "login";
         }
 
-
-        // -----------------------------------------
+        // =========================================
         // CHECK ROLE
-        // -----------------------------------------
+        // =========================================
 
         String role = user.getRole();
 
@@ -119,23 +119,20 @@ public class LoginController {
             return "login";
         }
 
-
         role = role.trim().toUpperCase();
 
-
-        // -----------------------------------------
+        // =========================================
         // ADMIN LOGIN
-        // -----------------------------------------
+        // =========================================
 
         if ("ADMIN".equals(role)) {
 
             return "redirect:/admin/dashboard";
         }
 
-
-        // -----------------------------------------
+        // =========================================
         // STUDENT LOGIN
-        // -----------------------------------------
+        // =========================================
 
         if ("STUDENT".equals(role)) {
 
@@ -153,10 +150,9 @@ public class LoginController {
                     + user.getStudentId();
         }
 
-
-        // -----------------------------------------
+        // =========================================
         // INVALID ROLE
-        // -----------------------------------------
+        // =========================================
 
         model.addAttribute(
                 "error",
