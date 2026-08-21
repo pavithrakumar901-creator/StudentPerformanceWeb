@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class PredictionController {
@@ -28,9 +29,9 @@ public class PredictionController {
         this.predictionRepository = predictionRepository;
     }
 
-    // ================================
+    // ==========================================
     // PREDICTION PAGE
-    // ================================
+    // ==========================================
 
     @GetMapping("/admin/prediction")
     public String predictionPage(Model model) {
@@ -42,9 +43,9 @@ public class PredictionController {
         return "prediction";
     }
 
-    // ================================
+    // ==========================================
     // SAVE PREDICTION
-    // ================================
+    // ==========================================
 
     @PostMapping("/admin/save-prediction")
     @ResponseBody
@@ -54,13 +55,30 @@ public class PredictionController {
 
         try {
 
+            // Check student exists
+            Optional<Student> student =
+                    studentRepository.findById(studentId);
+
+            if (student.isEmpty()) {
+                return "Student not found";
+            }
+
+            // Create prediction
             Prediction prediction = new Prediction();
 
             prediction.setStudentId(studentId);
             prediction.setPredictedPerformance(performance);
             prediction.setPredictionDate(LocalDateTime.now());
 
+            // Save prediction
             predictionRepository.save(prediction);
+
+            System.out.println(
+                    "Prediction saved successfully for Student ID = "
+                            + studentId
+                            + ", Performance = "
+                            + performance
+            );
 
             return "success";
 
@@ -72,15 +90,20 @@ public class PredictionController {
         }
     }
 
-    // ================================
+    // ==========================================
     // PREDICTION HISTORY
-    // ================================
+    // ==========================================
 
     @GetMapping("/admin/prediction-history")
     public String predictionHistory(Model model) {
 
         List<Prediction> predictions =
                 predictionRepository.findAllByOrderByPredictionDateDesc();
+
+        System.out.println(
+                "Prediction History Count = "
+                        + predictions.size()
+        );
 
         model.addAttribute("predictions", predictions);
 

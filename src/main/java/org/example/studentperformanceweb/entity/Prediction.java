@@ -12,13 +12,13 @@ public class Prediction {
     @Column(name = "prediction_id")
     private Integer predictionId;
 
-    @Column(name = "student_id")
+    @Column(name = "student_id", nullable = false)
     private Integer studentId;
 
-    @Column(name = "predicted_performance")
+    @Column(name = "predicted_performance", nullable = false)
     private String predictedPerformance;
 
-    @Column(name = "prediction_date")
+    @Column(name = "prediction_date", nullable = false)
     private LocalDateTime predictionDate;
 
     public Prediction() {
