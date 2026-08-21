@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import jakarta.servlet.http.HttpSession;
+
 import java.util.Optional;
 
 @Controller
@@ -34,8 +36,12 @@ public class LoginController {
 
     @GetMapping("/login")
     public String loginPage(
-            @RequestParam(value = "error", required = false) String error,
-            @RequestParam(value = "logout", required = false) String logout,
+            @RequestParam(value = "error", required = false)
+            String error,
+
+            @RequestParam(value = "logout", required = false)
+            String logout,
+
             Model model) {
 
         if (error != null) {
@@ -61,14 +67,26 @@ public class LoginController {
 
     @PostMapping("/login")
     public String login(
-            @RequestParam("username") String username,
-            @RequestParam("password") String password,
-            Model model) {
+            @RequestParam("username")
+            String username,
 
-        // Remove unnecessary spaces
+            @RequestParam("password")
+            String password,
+
+            Model model,
+
+            HttpSession session) {
+
+        // =========================================
+        // CLEAN USERNAME
+        // =========================================
+
         username = username.trim();
 
-        // Find user
+        // =========================================
+        // FIND USER
+        // =========================================
+
         Optional<User> userOptional =
                 userRepository.findByUsername(username);
 
@@ -122,10 +140,24 @@ public class LoginController {
         role = role.trim().toUpperCase();
 
         // =========================================
+        // SAVE USERNAME IN SESSION
+        // =========================================
+
+        session.setAttribute(
+                "username",
+                user.getUsername()
+        );
+
+        // =========================================
         // ADMIN LOGIN
         // =========================================
 
         if ("ADMIN".equals(role)) {
+
+            session.setAttribute(
+                    "role",
+                    "ADMIN"
+            );
 
             return "redirect:/admin/dashboard";
         }
@@ -136,6 +168,7 @@ public class LoginController {
 
         if ("STUDENT".equals(role)) {
 
+            // Check student ID
             if (user.getStudentId() == null) {
 
                 model.addAttribute(
@@ -146,8 +179,19 @@ public class LoginController {
                 return "login";
             }
 
-            return "redirect:/student/dashboard?studentId="
-                    + user.getStudentId();
+            // Save student information in session
+            session.setAttribute(
+                    "role",
+                    "STUDENT"
+            );
+
+            session.setAttribute(
+                    "studentId",
+                    user.getStudentId()
+            );
+
+            // Redirect to student dashboard
+            return "redirect:/student/dashboard";
         }
 
         // =========================================
@@ -160,5 +204,17 @@ public class LoginController {
         );
 
         return "login";
+    }
+
+    // =========================================
+    // LOGOUT
+    // =========================================
+
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+
+        session.invalidate();
+
+        return "redirect:/login?logout=true";
     }
 }

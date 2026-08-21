@@ -5,6 +5,7 @@ import org.example.studentperformanceweb.repository.StudentRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import jakarta.servlet.http.HttpSession;
 import java.util.Optional;
@@ -24,30 +25,58 @@ public class StudentController {
 
     @GetMapping("/student/dashboard")
     public String studentDashboard(
+            @RequestParam(value = "studentId", required = false)
+            Integer studentId,
+
             Model model,
             HttpSession session) {
 
-        // Get logged-in student's ID from session
-        Object studentIdObject = session.getAttribute("studentId");
+        // ==========================================
+        // GET STUDENT ID
+        // ==========================================
 
-        // If student is not logged in
-        if (studentIdObject == null) {
-            return "redirect:/";
+        // First check URL parameter
+        if (studentId != null) {
+
+            // Save student ID in session
+            session.setAttribute("studentId", studentId);
+
+        } else {
+
+            // If URL parameter is not available,
+            // get student ID from session
+
+            Object studentIdObject =
+                    session.getAttribute("studentId");
+
+            if (studentIdObject == null) {
+
+                return "redirect:/login?error=true";
+            }
+
+            studentId = (Integer) studentIdObject;
         }
 
-        Integer studentId = (Integer) studentIdObject;
+        // ==========================================
+        // FIND STUDENT
+        // ==========================================
 
-        // Find student from database
         Optional<Student> studentOptional =
                 studentRepository.findById(studentId);
 
-        // Student found
+        // ==========================================
+        // STUDENT FOUND
+        // ==========================================
+
         if (studentOptional.isPresent()) {
 
             Student student = studentOptional.get();
 
             // Send student data to HTML
-            model.addAttribute("student", student);
+            model.addAttribute(
+                    "student",
+                    student
+            );
 
             // Send username to HTML
             model.addAttribute(
@@ -58,7 +87,10 @@ public class StudentController {
             return "student-dashboard";
         }
 
-        // Student ID not found in database
+        // ==========================================
+        // STUDENT NOT FOUND
+        // ==========================================
+
         model.addAttribute(
                 "error",
                 "Student details not found!"
