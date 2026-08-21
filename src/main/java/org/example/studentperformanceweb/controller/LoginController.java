@@ -4,9 +4,7 @@ import org.example.studentperformanceweb.entity.User;
 import org.example.studentperformanceweb.repository.UserRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
@@ -19,19 +17,13 @@ public class LoginController {
         this.userRepository = userRepository;
     }
 
-    // ==========================================
-    // SHOW LOGIN PAGE
-    // ==========================================
-
-    @GetMapping("/login")
+    // Open website / or /login
+    @GetMapping({"/", "/login"})
     public String loginPage() {
         return "login";
     }
 
-    // ==========================================
-    // PROCESS LOGIN
-    // ==========================================
-
+    // Process login
     @PostMapping("/login")
     public String login(
             @RequestParam("username") String username,
@@ -41,55 +33,31 @@ public class LoginController {
         Optional<User> userOptional =
                 userRepository.findByUsername(username);
 
-        // Username not found
         if (userOptional.isEmpty()) {
-
-            model.addAttribute(
-                    "error",
-                    "Invalid username or password"
-            );
-
+            model.addAttribute("error",
+                    "Invalid username or password");
             return "login";
         }
 
         User user = userOptional.get();
 
-        // Password check
         if (user.getPassword() == null ||
                 !user.getPassword().equals(password)) {
 
-            model.addAttribute(
-                    "error",
-                    "Invalid username or password"
-            );
-
+            model.addAttribute("error",
+                    "Invalid username or password");
             return "login";
         }
 
-        // ==========================================
-        // ADMIN LOGIN
-        // ==========================================
-
         if ("ADMIN".equalsIgnoreCase(user.getRole())) {
-
             return "redirect:/admin/dashboard";
         }
 
-        // ==========================================
-        // STUDENT LOGIN
-        // ==========================================
-
         if ("STUDENT".equalsIgnoreCase(user.getRole())) {
-
             return "redirect:/student/dashboard";
         }
 
-        // Unknown role
-        model.addAttribute(
-                "error",
-                "Invalid user role"
-        );
-
+        model.addAttribute("error", "Invalid user role");
         return "login";
     }
 }
